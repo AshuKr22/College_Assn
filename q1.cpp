@@ -1,85 +1,261 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
 #include <chrono>
-#include<bits/stdc++.h>
 using namespace std;
-void heapify(vector<int>& arr, int n, int i) {
+
+// Helper function to heapify a subtree rooted with the given node
+template <typename T>
+void heapify(vector<T>& arr, int n, int i, bool isMaxHeap) {
     int largest = i;
     int left = 2 * i + 1;
     int right = 2 * i + 2;
 
-    if (left < n && arr[left] > arr[largest])
+    if (isMaxHeap && left < n && arr[left] > arr[largest])
         largest = left;
 
-    if (right < n && arr[right] > arr[largest])
+    if (isMaxHeap && right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (!isMaxHeap && left < n && arr[left] < arr[largest])
+        largest = left;
+
+    if (!isMaxHeap && right < n && arr[right] < arr[largest])
         largest = right;
 
     if (largest != i) {
         swap(arr[i], arr[largest]);
-        heapify(arr, n, largest);
+        heapify(arr, n, largest, isMaxHeap);
     }
 }
 
-void heapSort(vector<int>& arr) {
+// Main function for heap sort
+template <typename T>
+void heapSort(vector<T>& arr, bool isMaxHeap) {
     int n = arr.size();
 
-    // Build max heap
+    // Build heap (rearrange array)
     for (int i = n / 2 - 1; i >= 0; i--)
-        heapify(arr, n, i);
+        heapify(arr, n, i, isMaxHeap);
 
-    // Extract elements one by one
-    for (int i = n - 1; i >= 0; i--) {
-        swap(arr[0], arr[i]); // Swap root with last element
-        heapify(arr, i, 0); // Heapify reduced heap
+    // One by one extract an element from heap
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0, isMaxHeap);
     }
 }
 
-void printVector(const vector<int>& arr) {
-    for (int num : arr)
+ int main() {
+    ifstream inputFile("index.txt");
+
+    if (!inputFile.is_open()) {
+        cerr << "Unable to open the input file." << endl;
+        return 1;
+    }
+
+    vector<int> input;
+    int value;
+
+    // Read values from the input file
+    while (inputFile >> value) {
+        input.push_back(value);
+    }
+
+    // Close the input file
+    inputFile.close();
+
+    // Perform Min Heap sort (ascending order)
+    auto startMinHeap = chrono::high_resolution_clock::now();
+    heapSort(input, false);
+    auto endMinHeap = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Decending Order (Min Heap): ";
+    for (const auto& num : input) {
         cout << num << " ";
+    }
     cout << endl;
+
+    auto durationMinHeap = chrono::duration_cast<chrono::microseconds>(endMinHeap - startMinHeap);
+    cout << "Time taken (Min Heap): " << durationMinHeap.count() << " microseconds" << endl;
+
+    // Perform additional Min Heap sort for descending order
+    auto startMinHeapDescending = chrono::high_resolution_clock::now();
+    heapSort(input, false);
+    auto endMinHeapDescending = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Ascending Order (Min Heap): ";
+    for (auto it = input.rbegin(); it != input.rend(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+
+    auto durationMinHeapDescending = chrono::duration_cast<chrono::microseconds>(endMinHeapDescending - startMinHeapDescending);
+    cout << "Time taken (Descending Min Heap): " << durationMinHeapDescending.count() << " microseconds" << endl;
+
+    // Perform Max Heap sort (descending order)
+    auto startMaxHeap = chrono::high_resolution_clock::now();
+    heapSort(input, true);
+    auto endMaxHeap = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Ascending Order (Max Heap): ";
+    for (const auto& num : input) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    auto durationMaxHeap = chrono::duration_cast<chrono::microseconds>(endMaxHeap - startMaxHeap);
+    cout << "Time taken (Max Heap): " << durationMaxHeap.count() << " microseconds" << endl;
+
+    // Perform additional Max Heap sort for ascending order
+    auto startMaxHeapAscending = chrono::high_resolution_clock::now();
+    heapSort(input, true);
+    auto endMaxHeapAscending = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Descending Order (Max Heap): ";
+    for (const auto& num : input) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    auto durationMaxHeapAscending = chrono::duration_cast<chrono::microseconds>(endMaxHeapAscending - startMaxHeapAscending);
+    cout << "Time taken (Ascending Max Heap): " << durationMaxHeapAscending.count() << " microseconds" << endl;
+
+    return 0;
 }
-int main() {
-    const std::string filename = "data1.txt";
-    const int numRecords = 1000;
-    const int numObservations = 10;
 
-    // Generate data file with sorted integers
-    std::ofstream dataFile(filename);
-    for (int i = 1; i <= numRecords * 10; ++i) {
-        dataFile << i << " ";
+
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <chrono>
+using namespace std;
+
+// Helper function to heapify a subtree rooted with the given node
+template <typename T>
+void heapify(vector<T>& arr, int n, int i, bool isMaxHeap) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (isMaxHeap && left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (isMaxHeap && right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (!isMaxHeap && left < n && arr[left] < arr[largest])
+        largest = left;
+
+    if (!isMaxHeap && right < n && arr[right] < arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest, isMaxHeap);
     }
-    dataFile.close();
+}
 
-    std::ifstream inputFile(filename);
-    std::vector<int> dataRecords(numRecords);
+// Main function for heap sort
+template <typename T>
+void heapSort(vector<T>& arr, bool isMaxHeap) {
+    int n = arr.size();
 
-    for (int i = 0; i < numRecords; ++i) {
-        inputFile >> dataRecords[i];
+    // Build heap (rearrange array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i, isMaxHeap);
+
+    // One by one extract an element from heap
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0, isMaxHeap);
+    }
+}
+
+ int main() {
+    ifstream inputFile("index.txt");
+
+    if (!inputFile.is_open()) {
+        cerr << "Unable to open the input file." << endl;
+        return 1;
     }
 
-    std::vector<int> targets;
-    for (int i = 0; i < numObservations; ++i) {
-        targets.push_back(dataRecords[rand() % numRecords]);
+    vector<int> input;
+    int value;
+
+    // Read values from the input file
+    while (inputFile >> value) {
+        input.push_back(value);
     }
 
-    std::cout << "Target Values: ";
-    for (int target : targets) {
-        std::cout << target << " ";
+    // Close the input file
+    inputFile.close();
+
+    // Perform Min Heap sort (ascending order)
+    auto startMinHeap = chrono::high_resolution_clock::now();
+    heapSort(input, false);
+    auto endMinHeap = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Decending Order (Min Heap): ";
+    for (const auto& num : input) {
+        cout << num << " ";
     }
-    std::cout << std::endl;
-    
-    
-    
-    std::cout << "Observation in Microseconds" << std::endl;
-    
+    cout << endl;
 
-    std::cout << "Observations for Heao Sort:" << std::endl;
-    for (int target : targets) {
-        auto start = std::chrono::high_resolution_clock::now();
-        heapSort(dataRecords);
-        auto end = std::chrono::high_resolution_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " ";
+    auto durationMinHeap = chrono::duration_cast<chrono::microseconds>(endMinHeap - startMinHeap);
+    cout << "Time taken (Min Heap): " << durationMinHeap.count() << " microseconds" << endl;
+
+    // Perform additional Min Heap sort for descending order
+    auto startMinHeapDescending = chrono::high_resolution_clock::now();
+    heapSort(input, false);
+    auto endMinHeapDescending = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Ascending Order (Min Heap): ";
+    for (auto it = input.rbegin(); it != input.rend(); ++it) {
+        cout << *it << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 
+    auto durationMinHeapDescending = chrono::duration_cast<chrono::microseconds>(endMinHeapDescending - startMinHeapDescending);
+    cout << "Time taken (Descending Min Heap): " << durationMinHeapDescending.count() << " microseconds" << endl;
 
+    // Perform Max Heap sort (descending order)
+    auto startMaxHeap = chrono::high_resolution_clock::now();
+    heapSort(input, true);
+    auto endMaxHeap = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Ascending Order (Max Heap): ";
+    for (const auto& num : input) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    auto durationMaxHeap = chrono::duration_cast<chrono::microseconds>(endMaxHeap - startMaxHeap);
+    cout << "Time taken (Max Heap): " << durationMaxHeap.count() << " microseconds" << endl;
+
+    // Perform additional Max Heap sort for ascending order
+    auto startMaxHeapAscending = chrono::high_resolution_clock::now();
+    heapSort(input, true);
+    auto endMaxHeapAscending = chrono::high_resolution_clock::now();
+
+    // Output sorted result and time taken
+    cout << "Descending Order (Max Heap): ";
+    for (const auto& num : input) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    auto durationMaxHeapAscending = chrono::duration_cast<chrono::microseconds>(endMaxHeapAscending - startMaxHeapAscending);
+    cout << "Time taken (Ascending Max Heap): " << durationMaxHeapAscending.count() << " microseconds" << endl;
+
+    return 0;
 }
